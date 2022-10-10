@@ -2,98 +2,60 @@
     class Tablero {
         public $id;
         public $tab;
-        public $pos;
+        public $mina;
         public $tam;
 
 
-        function __construct($p,$long){
+        function __construct($mina,$long){
             $this->$id;
             $this->tab = [];
-            $this->pos = $p;
+            $this->mina = $mina;
             $this->tam = $long;
         }
 
-        /**
-         * Get the value of tab
-         */ 
-        public function getTab()
-        {
-                return $this->tab;
+        function generarTablero(){
+            for( $i = 0; $i < $this->tam; $i++ ){
+                $this->tab[$i]= ' - ';
+            }          
         }
 
-        /**
-         * Set the value of tab
-         *
-         * @return  self
-         */ 
-        public function setTab($tab)
-        {
-                $this->tab = $tab;
-
-                return $this;
+        function addMinas(){
+            for($i = 0; $i < $this->mina; $i++){
+                do{
+                    $alea = rand(0,($this->tam-1));
+                }while($this->tab[$alea] == '*');
+                $this->tab[$alea] = '*';      
+            }
         }
 
-
-        /**
-         * Get the value of pos
-         */ 
-        public function getPos()
-        {
-                return $this->pos;
+        function construirPistas(){
+            for( $i = 0; $i < $this->tam; $i++ ){
+                if($this->tab[$i] == '*'){
+                    if($i + 1 < $this->tam && $this->tab[$i + 1] != '*'){
+                        $this->tab[$i + 1] = $this->tab[$i + 1] + 1;
+                    }
+                    if($i - 1 > 0 && $this->tab[$i - 1] != '*'){
+                        $this->tab[$i - 1] = $this->tab[$i + 1] + 1;
+                    }
+                }
+            }
         }
 
-        /**
-         * Set the value of pos
-         *
-         * @return  self
-         */ 
-        public function setPos($pos)
-        {
-                $this->pos = $pos;
-
-                return $this;
+        function comprobarTablero($pos){
+            $result = false;
+            if ($this->tab[$pos] == '*'){
+                $result = true;
+            }
+            return result;
         }
 
-        /**
-         * Get the value of mensaje
-         */ 
-        public function getMensaje()
-        {
-                return $this->mensaje;
+        function getResultado($pos){
+            return $this->tab[$pos];
         }
 
-        /**
-         * Set the value of mensaje
-         *
-         * @return  self
-         */ 
-        public function setMensaje($mensaje)
-        {
-                $this->mensaje = $mensaje;
-
-                return $this;
+        function guardarResultado($pos, $result){
+            $this->tab[$pos] = $result;
         }
 
-
-
-        /**
-         * Get the value of tam
-         */ 
-        public function getTam()
-        {
-                return $this->tam;
-        }
-
-        /**
-         * Set the value of tam
-         *
-         * @return  self
-         */ 
-        public function setTam($tam)
-        {
-                $this->tam = $tam;
-
-                return $this;
-        }
     }
 ?>

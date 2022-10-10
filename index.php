@@ -10,7 +10,9 @@
     $param = explode("/",$paths);   
     unset($param[0]);
     if($requestMethod == "GET"){
-       
+        $datosRecibidos = file_get_contents("php://input");
+        $datos = json_decode($datosRecibidos, true);
+        
     }else if($requestMethod == "POST"){
         $datosRecibidos = file_get_contents("php://input");
         $datos = json_decode($datosRecibidos, true);
