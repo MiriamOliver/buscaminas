@@ -13,6 +13,86 @@
             $this->tam = $long;
         }
 
+        /**
+         * Get the value of id
+         */ 
+        public function getId()
+        {
+                return $this->id;
+        }
+
+        /**
+         * Set the value of id
+         *
+         * @return  self
+         */ 
+        public function setId($id)
+        {
+                $this->id = $id;
+
+                return $this;
+        }
+
+        /**
+         * Get the value of tab
+         */ 
+        public function getTab()
+        {
+                return $this->tab;
+        }
+
+        /**
+         * Set the value of tab
+         *
+         * @return  self
+         */ 
+        public function setTab($tab)
+        {
+                $this->tab = $tab;
+
+                return $this;
+        }
+
+        /**
+         * Get the value of mina
+         */ 
+        public function getMina()
+        {
+                return $this->mina;
+        }
+
+        /**
+         * Set the value of mina
+         *
+         * @return  self
+         */ 
+        public function setMina($mina)
+        {
+                $this->mina = $mina;
+
+                return $this;
+        }
+
+        /**
+         * Get the value of tam
+         */ 
+        public function getTam()
+        {
+                return $this->tam;
+        }
+
+        /**
+         * Set the value of tam
+         *
+         * @return  self
+         */ 
+        public function setTam($tam)
+        {
+                $this->tam = $tam;
+
+                return $this;
+        }
+
         function generarTablero(){
             for( $i = 0; $i < $this->tam; $i++ ){
                 $this->tab[$i]= ' - ';
@@ -32,10 +112,18 @@
             for( $i = 0; $i < $this->tam; $i++ ){
                 if($this->tab[$i] == '*'){
                     if($i + 1 < $this->tam && $this->tab[$i + 1] != '*'){
-                        $this->tab[$i + 1] = $this->tab[$i + 1] + 1;
+                        if($this->tab[$i + 1] == ' - '){
+                            $this->tab[$i + 1] = 1;
+                        }else{
+                            $this->tab[$i + 1] = $this->tab[$i + 1] + 1;
+                        }
                     }
                     if($i - 1 > 0 && $this->tab[$i - 1] != '*'){
-                        $this->tab[$i - 1] = $this->tab[$i + 1] + 1;
+                        if($this->tab[$i + 1] == ' - '){
+                            $this->tab[$i - 1] = 1;
+                        }else{
+                            $this->tab[$i - 1] = $this->tab[$i + 1] + 1;
+                        }
                     }
                 }
             }
@@ -56,6 +144,5 @@
         function guardarResultado($pos, $result){
             $this->tab[$pos] = $result;
         }
-
     }
 ?>

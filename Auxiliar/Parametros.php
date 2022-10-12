@@ -5,6 +5,7 @@
             public static $passwd = 'Chubaca2023';
             public static $TablaJugador = 'jugador';
             public static $TablaTablero = 'tablero';
+            public static $TablaPartida = 'partida';
             public static $host = 'localhost';
     }
 ?>
