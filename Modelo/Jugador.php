@@ -2,15 +2,15 @@
     class Jugador{
         public $id;
         public $nombre;
-        public $clave;
+        public $passw;
         public $realizadas;
         public $ganadas;
         public $perdidas;
 
-        function __construct($id, $nombre, $clave, $realizadas, $ganadas, $perdidas){
+        function __construct($id, $nombre, $passw, $realizadas, $ganadas, $perdidas){
             $this->id = $id;
             $this->nombre = $nombre;
-            $this->clave = $clave;
+            $this->passw = $passw;
             $this->realizadas = $realizadas;
             $this->ganadas = $ganadas;
             $this->perdidas = $perdidas;
@@ -39,9 +39,9 @@
         /**
          * Get the value of clave
          */ 
-        public function getClave()
+        public function getPasww()
         {
-                return $this->clave;
+                return $this->passw;
         }
 
         /**
@@ -49,9 +49,9 @@
          *
          * @return  self
          */ 
-        public function setClave($clave)
+        public function setPassw($passw)
         {
-                $this->clave = $clave;
+                $this->passw = $passw;
 
                 return $this;
         }
