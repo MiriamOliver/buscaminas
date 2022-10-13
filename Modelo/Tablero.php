@@ -127,16 +127,16 @@
                 if($this->tab[$i] == ' * '){
                     if($i + 1 < $this->tam && $this->tab[$i + 1] != ' * '){
                         if($this->tab[$i + 1] == ' - '){
-                            $this->tab[$i + 1] = 1;
+                            $this->tab[$i + 1] = " ".(1). " ";
                         }else{
-                            $this->tab[$i + 1] = $this->tab[$i + 1] + 1;
+                            $this->tab[$i + 1] = " " .($this->tab[$i + 1] + 1). " ";
                         }
                     }
                     if($i - 1 > 0 && $this->tab[$i - 1] != ' * '){
                         if($this->tab[$i - 1] == ' - '){
-                            $this->tab[$i - 1] = 1;
+                            $this->tab[$i - 1] = " ".(1). " ";
                         }else{
-                            $this->tab[$i - 1] = $this->tab[$i + 1] + 1;
+                            $this->tab[$i - 1] = " " .($this->tab[$i - 1] + 1). " ";
                         }
                     }
                 }
