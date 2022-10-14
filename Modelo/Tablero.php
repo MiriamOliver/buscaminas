@@ -16,16 +16,19 @@
 
 
         function __construct3($id, $long, $mina){
-            $this->$id = $id;
+            $this->id = $id;
             $this->tab = [];
             $this->mina = $mina;
             $this->tam = $long;
         }
 
-        function __construct1($tablero){
+        function __construct4($id, $tablero, $long, $mina){
+            $this->id = $id;
             $this->tab = $tablero;
-            $this->tam = count($tablero);
+            $this->tam = $long;
+            $this->mina = $mina;
         }
+        
 
         /**
          * Get the value of id
@@ -109,7 +112,7 @@
 
         function generarTablero(){
             for( $i = 0; $i < $this->tam; $i++ ){
-                $this->tab[$i]= ' - ';
+                $this->tab[$i]= '-';
             }          
         }
 
@@ -117,26 +120,26 @@
             for($i = 0; $i < $this->mina; $i++){
                 do{
                     $alea = rand(0,($this->tam-1));
-                }while($this->tab[$alea] == ' * ');
-                $this->tab[$alea] = ' * ';      
+                }while($this->tab[$alea] == '*');
+                $this->tab[$alea] = '*';      
             }
         }
 
         function construirPistas(){
             for( $i = 0; $i < $this->tam; $i++ ){
-                if($this->tab[$i] == ' * '){
-                    if($i + 1 < $this->tam && $this->tab[$i + 1] != ' * '){
-                        if($this->tab[$i + 1] == ' - '){
-                            $this->tab[$i + 1] = " ".(1). " ";
+                if($this->tab[$i] == '*'){
+                    if($i + 1 < $this->tam && $this->tab[$i + 1] != '*'){
+                        if($this->tab[$i + 1] == '-'){
+                            $this->tab[$i + 1] = (1);
                         }else{
-                            $this->tab[$i + 1] = " " .($this->tab[$i + 1] + 1). " ";
+                            $this->tab[$i + 1] = ($this->tab[$i + 1] + 1);
                         }
                     }
-                    if($i - 1 > 0 && $this->tab[$i - 1] != ' * '){
-                        if($this->tab[$i - 1] == ' - '){
-                            $this->tab[$i - 1] = " ".(1). " ";
+                    if($i - 1 > 0 && $this->tab[$i - 1] != '*'){
+                        if($this->tab[$i - 1] == '-'){
+                            $this->tab[$i - 1] = (1);
                         }else{
-                            $this->tab[$i - 1] = " " .($this->tab[$i - 1] + 1). " ";
+                            $this->tab[$i - 1] = ($this->tab[$i - 1] + 1);
                         }
                     }
                 }
@@ -157,7 +160,7 @@
 
         function guardarResultado($pos, $result){
             if($result == '-'){
-                $this->tab[$pos] = 0;
+                $this->tab[$pos] = "0";
             }else{
                 $this->tab[$pos] = $result;
             }

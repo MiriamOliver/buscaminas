@@ -16,6 +16,7 @@
         }
 
         static function mostrarJugador($id, $nombre, $passwd){
+            $p = null;
             self::$consulta = "SELECT * FROM " .Parametros::$TablaJugador. " WHERE ID like ? and nombre like ? and passw like ?";
             self::abrirConexion();
             $stmt = self::$conexion->prepare(self::$consulta);
@@ -25,12 +26,11 @@
                 self::$resultado = $stmt->get_result();
                 while($fila = self::$resultado->fetch_array()){
                     $p = new Jugador($fila["ID"] , $fila["nombre"], $fila["passw"], $fila["realizadas"], $fila["ganadas"], $fila["perdidas"]);
-
                 }
             }catch (Exception $e) { 
             }finally {
-            self::$resultado->free_result();
-            self::cerrarConexion();
+                self::$resultado->free_result();
+                self::cerrarConexion();
             }
             return $p;
         }
@@ -60,7 +60,9 @@
             $stmt->bind_param("sss", $nombre, $passwd, $id); 
             try{
                 if($stmt->execute()){
-                    $conseguido = true;
+                    if ($stmt->affected_rows > 0) {
+                        $conseguido = true;
+                    }
                 }   
             }catch (Exception $e) { 
             }finally {          
@@ -86,12 +88,12 @@
             return $conseguido;
         }
 
-        static function insertTablero($id, $tablero, $tableroJugador, $idJugador){
+        static function insertTablero($id, $tablero, $tableroJugador, $idJugador, $mina){
             $conseguido = false;
             self::abrirConexion();
-            self::$consulta = "INSERT INTO " .Parametros::$TablaTablero. " VALUES (?, ?, ?, ?)"; 
+            self::$consulta = "INSERT INTO " .Parametros::$TablaTablero. " VALUES (?, ?, ?, ?, ?)"; 
             $stmt = self::$conexion->prepare(self::$consulta);
-            $stmt->bind_param("ssss", $id, $tablero, $tableroJugador, $idJugador); 
+            $stmt->bind_param("ssssi", $id, $tablero, $tableroJugador, $idJugador, $mina); 
             try{
                 if($stmt->execute()){
                     $conseguido = true;   
@@ -104,7 +106,7 @@
         }
 
         static function getTablero($id){
-            $tablero = null;
+            $tablero = [];
             self::$consulta = "SELECT * FROM " .Parametros::$TablaTablero. " WHERE IDJugador like ?";
             self::abrirConexion();
             $stmt = self::$conexion->prepare(self::$consulta);
@@ -112,10 +114,9 @@
             try{
                 $stmt->execute();
                 self::$resultado = $stmt->get_result();
-                while($fila = self::$resultado->fetch_array()){
-                    $tablero[0] = $fila["tablero"];
-                    $tablero[1] = $fila["tableroHumano"];
-                    $tablero[2] = $fila["ID"];
+                if($fila = self::$resultado->fetch_array()){
+                    array_push($tablero, new Tablero($fila["ID"], explode("#", $fila["tablero"]), count(explode("#", $fila["tablero"])), $fila["mina"])); 
+                    array_push($tablero, new Tablero($fila["ID"], explode("#", $fila["tableroHumano"]), count(explode("#", $fila["tableroHumano"])), $fila["mina"]));
                 }
             }catch (Execution $e){
             }finally{
@@ -134,7 +135,9 @@
             $stmt->bind_param("ss", $tJugador, $id); 
             try{
                 if($stmt->execute()){
-                    $conseguido = true;
+                    if ($stmt->affected_rows > 0) {
+                        $conseguido = true;
+                    }
                 }  
             }catch (Exception $e){
             }finally{           
@@ -216,16 +219,19 @@
         static function deleteJugador($id, $nombre, $passwd){
             $conseguido = false;
             self::abrirConexion();
-            self::$consulta = "DELETE FROM " .Parametros::$TablaJugador."join " .Parametros::$TablaTablero. "on " 
-            .Parametros::TablaJugador.".ID = ".Parametros::$TablaTablero.".IDJugador join " .Parametros::$TablaPartida. "on "
-            .Parametros::TablaJugador.".ID = ".Parametros::$TablaPartida.".ID_jugador WHERE ".Parametros::$TablaJugador.".ID like ? 
-            AND ".Parametros::$TablaJugador.".nombre like ? AND ".Parametros::$TablaJugador.".passw like ?";
+            self::$consulta = "DELETE FROM " .Parametros::$TablaJugador. " WHERE ID like ? AND nombre = ? AND passw = ?";
             $stmt = self::$conexion->prepare(self::$consulta);
             $stmt->bind_param("sss", $id, $nombre, $passwd); 
-            if($stmt->execute()){
-                $conseguido = true;
-            }                 
-            self::cerrarConexion(); 
+            try{
+                if($stmt->execute()){
+                    if ($stmt->affected_rows > 0) {
+                        $conseguido = true;
+                    }
+                } 
+            }catch (Exception $e){
+            }finally{                
+                self::cerrarConexion();
+            } 
             return $conseguido;    
         }
 

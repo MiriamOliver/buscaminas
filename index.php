@@ -8,7 +8,7 @@
     $requestMethod = $_SERVER["REQUEST_METHOD"];
     $paths = $_SERVER['REQUEST_URI'];
 
-    if($requestMethod != "GET" && $requestMethod != "POST" && $requestMethod != "PUT" && $requestMethod && "DELETE"){
+    if($requestMethod != "GET" && $requestMethod != "POST" && $requestMethod != "PUT" && $requestMethod != "DELETE"){
         $cod = 405;
         $desc = 'Verbo no admitido';
         $resultado = $desc;
@@ -23,7 +23,7 @@
                 $desc = 'Faltan parámetros';
                 $resultado = 'Faltan parámetros';
             }else{
-                if($param[1] == 'Cliente3'){
+                if($param[1] == 'Cliente3' && count($param) == 1){
                     $datosRecibidos = file_get_contents("php://input");
                     $datos = json_decode($datosRecibidos, true);
                     $p = Conexion::mostrarJugador($datos['id'], $datos['nombre'], $datos['passw']);
@@ -34,8 +34,12 @@
                         ];
                             $cod = 200;
                             $desc = 'Ok. Información de las partidas';
+                    }else{
+                        $cod = 400;
+                        $desc = 'Ok. No se encuentra';
+                        $resultado = $desc;
                     }
-                }else if($param[1] == 'Juego1'){
+                }else if($param[1] == 'Juego1' && count($param) == 1 || count($param) == 3){
                     if(empty($param[2]) && empty($param[3])){
                         $datosRecibidos = file_get_contents("php://input");
                         $datos = json_decode($datosRecibidos, true);
@@ -47,7 +51,7 @@
                             $t->addMinas();
                             $t->construirPistas();
                             $tJugador->generarTablero();
-                            if (Conexion::insertTablero($id, implode($t->getTab()), implode($tJugador->getTab()), $datos['id'])){
+                            if (Conexion::insertTablero($id, implode("#",$t->getTab()), implode("#", $tJugador->getTab()), $datos['id'], 3)){
                                 $cod = 200;
                                 $desc = 'Ok. Información guardada';
                                 $resultado = $tJugador->getTab();
@@ -76,19 +80,19 @@
                             $t->addMinas();
                             $t->construirPistas();
                             $tJugador->generarTablero();
-                            if (Conexion::insertTablero($id, implode($t->getTab()), implode($tJugador->getTab()), $datos['id'])){
+                            if (Conexion::insertTablero($id, implode("#",$t->getTab()), implode("#", $tJugador->getTab()), $datos['id'], $param[3])){
                                 $cod = 200;
                                 $desc = 'Ok. Información guardada';
                                 $resultado = $tJugador->getTab();
                             }
                         }
                     }
-                }else if($param[1] == 'Juego2'){
+                }else if($param[1] == 'Juego2' && count($param) == 2){
                     if(!is_numeric($param[2])){
                         $cod = 400;
                         $desc = 'error';
                         $resultado = 'Solo caractéres numéricos';
-                    }else if(empty($param[2])){
+                    }else if(empty($param[2]) && $param[2] != 0){
                         $cod = 400;
                         $desc = 'error';
                         $resultado = 'Faltan parámetros';
@@ -98,15 +102,15 @@
                         if(Conexion::getJugador($datos['id'], $datos['nombre'], $datos['passw'])){
                             $tablero = Conexion::getTablero($datos['id']);
                             if($tablero != null){
-                                $t = new Tablero(explode("  ", $tablero[0]));
-                                $tHumano = new Tablero(explode("  ", $tablero[1]));
+                                $t = $tablero[0];
+                                $tHumano = $tablero[1];
                                 $result = $t->comprobarTablero($param[2]);
                                 if(!$result){
                                     $tHumano->guardarResultado($param[2], $t->getResultado($param[2]));
-                                    if(substr_count($tablero[0], '*') == $tHumano->cantCasillas()){
+                                    if($t->getMina() == $tHumano->cantCasillas()){
                                         Conexion::deleteTablero($datos['id']);
                                         Conexion::updatePartidasJugador($datos['id'], true);
-                                        if(Conexion::insertPartida($datos['id'], implode("  ", $tHumano->getTab()))){
+                                        if(Conexion::insertPartida($datos['id'], implode("#", $tHumano->getTab()), $tHumano->getId())){
                                             $cod = 202;
                                             $desc = 'OK';
                                             $resultado = [
@@ -114,7 +118,7 @@
                                                 'tablero' => $tHumano->getTab()
                                             ];
                                         }
-                                    }else if(Conexion::updateTablero($datos['id'], implode("  ", $tHumano->getTab()))){
+                                    }else if(Conexion::updateTablero($datos['id'], implode("#", $tHumano->getTab()))){
                                         $cod = 202;
                                         $desc = 'Tablero actualizado';
                                         $resultado = $tHumano->getTab();
@@ -123,7 +127,7 @@
                                     $tHumano->guardarResultado($param[2], $t->getResultado($param[2]));
                                     Conexion::deleteTablero($datos['id']);
                                     Conexion::updatePartidasJugador($datos['id'], false);
-                                    if(Conexion::insertPartida($datos['id'], implode("  ", $tHumano->getTab()), $tablero[2])){
+                                    if(Conexion::insertPartida($datos['id'], implode("#", $tHumano->getTab()), $tHumano->getId())){
                                         $cod = 202;
                                         $desc = 'OK';
                                         $resultado = [
@@ -162,6 +166,10 @@
                         $cod = 201;
                         $desc = 'Anadido con éxito';
                         $resultado = 'Jugador registrado';
+                    }else{
+                        $cod = 400;
+                        $desc = 'ERROR';
+                        $resultado = 'Usuario ya registrado';
                     }
                 }else{
                     $cod = 400;
@@ -189,7 +197,7 @@
                     }else{
                         $cod = 400;
                         $desc = 'Datos incorrectos';
-                        $resultado = 'El cliente no se pudo registrar';
+                        $resultado = 'El cliente no se pudo modificar';
                     }
                 }else{
                     $cod = 400;
@@ -228,5 +236,5 @@
         }
     }   
     echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
-    header("HTTP/1.1 " .$cod. " - " .$desc);
+    header("HTTP/1.1 " .$cod. " " .$desc);
 ?>
