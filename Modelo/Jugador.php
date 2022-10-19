@@ -3,17 +3,21 @@
         public $id;
         public $nombre;
         public $passw;
+        public $correo;
         public $realizadas;
         public $ganadas;
         public $perdidas;
+        public $verificado;
 
-        function __construct($id, $nombre, $passw, $realizadas, $ganadas, $perdidas){
+        function __construct($id, $nombre, $passw, $email, $realizadas, $ganadas, $perdidas, $verificar){
             $this->id = $id;
             $this->nombre = $nombre;
             $this->passw = $passw;
+            $this->correo = $email;
             $this->realizadas = $realizadas;
             $this->ganadas = $ganadas;
             $this->perdidas = $perdidas;
+            $this->verificado = $verificar;
         }
 
         /**
@@ -136,8 +140,48 @@
                 return $this;
         }
 
+        /**
+         * Get the value of correo
+         */ 
+        public function getCorreo()
+        {
+                return $this->correo;
+        }
+
+        /**
+         * Set the value of correo
+         *
+         * @return  self
+         */ 
+        public function setCorreo($correo)
+        {
+                $this->correo = $correo;
+
+                return $this;
+        }
+
+        /**
+         * Get the value of verificado
+         */ 
+        public function getVerificado()
+        {
+                return $this->verificado;
+        }
+
+        /**
+         * Set the value of verificado
+         *
+         * @return  self
+         */ 
+        public function setVerificado($verificado)
+        {
+                $this->verificado = $verificado;
+
+                return $this;
+        }
+
         function __toString(){
-            return "Jugador{ Nombre : ".$this->nombre. ", Realizadas : " .$this->realizadas. ", Ganadas : " .$this->ganadas. ", Perdidas : " .$this->perdidas. "}";
+            return "Jugador{ ID : ".$this->id." Nombre : ".$this->nombre. ", Realizadas : " .$this->realizadas. ", Ganadas : " .$this->ganadas. ", Perdidas : " .$this->perdidas. "}";
         }
     }
 
