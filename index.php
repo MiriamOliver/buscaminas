@@ -120,11 +120,7 @@
                         }
                     }
                 }else if($param[1] == 'Juego2' && count($param) == 2){
-                    if(!is_numeric($param[2])){
-                        $cod = 400;
-                        $desc = 'error';
-                        $resultado = 'Solo caractéres numéricos';
-                    }else if(empty($param[2]) && $param[2] != 0){
+                    if(empty($param[2]) && $param[2] != 0){
                         $cod = 400;
                         $desc = 'error';
                         $resultado = 'Faltan parámetros';
@@ -136,48 +132,66 @@
                             if($tablero != null){
                                 $t = $tablero[0];
                                 $tHumano = $tablero[1];
-                                $result = $t->comprobarTablero($param[2]);
-                                if(!$result){
-                                    $tHumano->guardarResultado($param[2], $t->getResultado($param[2]));
-                                    if($t->getMina() == $tHumano->cantCasillas()){
-                                        //Conexion::deleteTablero($datos['id']);
-                                        Conexion::updatePartidasJugador($datos['id'], true);
+                                if($param[2] == 'rendirse'){
+                                    Conexion::updatePartidasJugador($datos['id'], false);
+                                    if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 1)){                                    
+                                        $cod = 200;
+                                        $desc = 'OK';
+                                        $resultado = [
+                                            'resultado' => 'TE HAS RENDIDO . PERDISTES',
+                                            'tablero' => $tHumano->getTab()
+                                        ];
+                                    }
+                                }else if(is_numeric($param[2]) && $param[2] < $tHumano->getTam()){
+                                    $result = $t->comprobarTablero($param[2]);
+                                    if(!$result){
+                                        $tHumano->guardarResultado($param[2], $t->getResultado($param[2]));
+                                        if($t->getMina() == $tHumano->cantCasillas()){
+                                            Conexion::updatePartidasJugador($datos['id'], true);
+                                            if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 1)){
+                                                $cod = 202;
+                                                $desc = 'OK';
+                                                $resultado = [
+                                                    'resultado' => 'GANASTES',
+                                                    'tablero' => $tHumano->getTab()
+                                                ];
+                                            }
+                                        }else if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 0)){
+                                            $cod = 202;
+                                            $desc = 'Tablero actualizado';
+                                            $resultado = $tHumano->getTab();
+                                        }
+                                    }else if($result){
+                                        $tHumano->guardarResultado($param[2], $t->getResultado($param[2]));
+                                        Conexion::updatePartidasJugador($datos['id'], false);
                                         if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 1)){
                                             $cod = 202;
                                             $desc = 'OK';
                                             $resultado = [
-                                                'resultado' => 'GANASTES',
+                                                'resultado' => 'PERDISTES',
                                                 'tablero' => $tHumano->getTab()
                                             ];
                                         }
-                                    }else if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 0)){
-                                        $cod = 202;
-                                        $desc = 'Tablero actualizado';
-                                        $resultado = $tHumano->getTab();
                                     }
-                                }else if($result){
-                                    $tHumano->guardarResultado($param[2], $t->getResultado($param[2]));
-                                    //Conexion::deleteTablero($datos['id']);
-                                    Conexion::updatePartidasJugador($datos['id'], false);
-                                    if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 1)){
-                                        $cod = 202;
-                                        $desc = 'OK';
-                                        $resultado = [
-                                            'resultado' => 'PERDISTES',
-                                            'tablero' => $tHumano->getTab()
-                                        ];
-                                    }
+                                }else if( $param[2] >= $tHumano->getTam()){
+                                    $cod = 400;
+                                    $desc = 'error';
+                                    $resultado = 'La posición es mayor que el tamaño del tablero';
+                                }else{
+                                    $cod = 400;
+                                    $desc = 'error';
+                                    $resultado = 'Datos incorrectos';    
                                 }    
                             }else{
                                 $cod = 400;
                                 $desc = 'error';
                                 $resultado = 'El usuario no dispone de tablero';
-                            }
+                            }   
                         }else{
                             $cod = 400;
                             $desc = 'error';
                             $resultado = 'Usuario incorrecto';
-                        }
+                        }  
                     }
                 }else{
                     $cod = 400;

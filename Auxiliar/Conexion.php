@@ -112,10 +112,14 @@
         }
 
         static function getTableros($id){
-            $consulta = "SELECT * FROM " .Parametros::$TablaTablero. " WHERE IDJugador like ? and completado = 1";
+            $consulta = "SELECT " .Parametros::$TablaTablero.".ID, " .Parametros::$TablaTablero.".tableroHumano FROM "
+            .Parametros::$TablaTablero. " join " .Parametros::$TablaPartida. " on " 
+            .Parametros::$TablaTablero.".ID = ".Parametros::$TablaPartida.".IDtablero join " .Parametros::$TablaJugador.
+            " on ".Parametros::$TablaJugador.".ID = ".Parametros::$TablaPartida.".IDjugador WHERE " .Parametros::$TablaJugador."
+            .ID like ? and " .Parametros::$TablaTablero.".completado = 1";
             self::abrirConexion();
             $stmt = self::$conexion->prepare($consulta);
-            $stmt->bind_param("si", $id, $completado); 
+            $stmt->bind_param("s", $id); 
             try{
                 $stmt->execute();
                 $resultado = $stmt->get_result();
