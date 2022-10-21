@@ -87,7 +87,7 @@
         }
 
         static function getTableroActivo($id){
-            $tablero = [];
+            $tablero = null;
             $consulta = "SELECT " .Parametros::$TablaTablero.".ID, " .Parametros::$TablaTablero.".tablero, " .Parametros::$TablaTablero.".tableroHumano, " .Parametros::$TablaTablero.".mina FROM "
             .Parametros::$TablaTablero. " join " .Parametros::$TablaPartida. " on " 
             .Parametros::$TablaTablero.".ID = ".Parametros::$TablaPartida.".IDtablero join " .Parametros::$TablaJugador.
@@ -100,8 +100,8 @@
                 $stmt->execute();
                 $resultado = $stmt->get_result();
                 if($fila = $resultado->fetch_array()){
-                    array_push($tablero, new Tablero($fila["ID"], explode("#", $fila["tablero"]), count(explode("#", $fila["tablero"])), $fila["mina"])); 
-                    array_push($tablero, new Tablero($fila["ID"], explode("#", $fila["tableroHumano"]), count(explode("#", $fila["tableroHumano"])), $fila["mina"]));
+                    $tablero = ['id' => $fila["ID"], 'tablero' => explode("#", $fila["tablero"]), 'tableroHumano' => explode("#", $fila["tableroHumano"]), 
+                    'tam' => count(explode("#", $fila["tablero"])), 'mina' => $fila["mina"]];
                 }
             }catch (Execution $e){
             }finally{
@@ -156,20 +156,7 @@
             } 
             return $conseguido;
         }
-/*
-        static function rendirse($id){
-            self::abrirConexion();
-            self::$consulta = "DELETE FROM " .Parametros::$TablaTablero. " WHERE IDJugador like ? and completado = 0";
-            $stmt = self::$conexion->prepare($consulta);
-            $stmt->bind_param("s", $id);
-            try{ 
-            $stmt->execute();
-            }catch (Exception $e){
-            }finally{ 
-                self::cerrarConexion();
-            }
-        }
-*/
+
         static function deleteTableros($id){
             $conseguido = false;
             self::abrirConexion();

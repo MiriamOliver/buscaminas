@@ -65,3 +65,13 @@ Json {
     passw
 }
 El jugador golpea en su tablero en la posicion (7) que pida
+______________________________________________
+
+Ruta = localhost/Juego2/rendirse
+Json {
+    id
+    nombre
+    passw
+}
+El jugador se rinde y la partida cuenta como perdida
+______________________________________________

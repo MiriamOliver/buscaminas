@@ -135,7 +135,7 @@
                             $this->tab[$i + 1] = ($this->tab[$i + 1] + 1);
                         }
                     }
-                    if($i - 1 > 0 && $this->tab[$i - 1] != '*'){
+                    if($i - 1 >= 0 && $this->tab[$i - 1] != '*'){
                         if($this->tab[$i - 1] == '-'){
                             $this->tab[$i - 1] = (1);
                         }else{

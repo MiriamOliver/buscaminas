@@ -130,8 +130,8 @@
                         if(Conexion::getJugador($datos['id'], $datos['nombre'], $datos['passw'])){
                             $tablero = Conexion::getTableroActivo($datos['id']);
                             if($tablero != null){
-                                $t = $tablero[0];
-                                $tHumano = $tablero[1];
+                                $t = new Tablero ($tablero['id'], $tablero['tablero'], $tablero['tam'], $tablero['mina']);
+                                $tHumano = new Tablero ($tablero['id'], $tablero['tableroHumano'], $tablero['tam'], $tablero['mina']);
                                 if($param[2] == 'rendirse'){
                                     Conexion::updatePartidasJugador($datos['id'], false);
                                     if(Conexion::updateTablero($tHumano->getId(), implode("#", $tHumano->getTab()), 1)){                                    
